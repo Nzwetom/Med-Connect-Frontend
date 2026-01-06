@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface DoctorProfileData {
   specialty?: string;
@@ -45,7 +46,7 @@ export interface ProfileResponse {
 })
 export class DoctorProfile {
   
-  private apiUrl = 'http://localhost:5000/api/doctors';
+  private apiUrl = `${environment.apiUrl}/api/doctors`;
 
   constructor(private http: HttpClient) {}
 

@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Message {
   _id?: string;
@@ -43,7 +44,7 @@ export interface MessageResponse {
 })
 export class MessageService {
 
- private apiUrl = 'http://localhost:5000/api/messages';
+ private apiUrl = `${environment.apiUrl}/api/messages`;
   private unreadCountSubject = new BehaviorSubject<number>(0);
   public unreadCount$ = this.unreadCountSubject.asObservable();
 

@@ -7,6 +7,7 @@ import { Auth } from '../../services/auth';
 import { PatientProfileService, PatientProfile, Allergy, Medication, EmergencyContact } from '../../services/patient-profile';
 import { DoctorProfile } from '../../services/doctor-profile';
 import { OnboardingService } from '../../services/onboarding';
+import { environment } from '../../../environments/environment';
 
 interface UserProfile {
   name: string;
@@ -198,7 +199,7 @@ export class AccountSettings implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.get('http://localhost:5000/api/availability/settings', { headers }).subscribe({
+    this.http.get(`${environment.apiUrl}/api/availability/settings`, { headers }).subscribe({
       next: (response: any) => {
         if (response.success && response.availability) {
           console.log('✅ Doctor availability loaded:', response.availability);
@@ -326,7 +327,7 @@ export class AccountSettings implements OnInit {
     });
 
     this.http.put(
-      'http://localhost:5000/api/availability/settings',
+      `${environment.apiUrl}/api/availability/settings`,
       availabilityData,
       { headers }
     ).subscribe({

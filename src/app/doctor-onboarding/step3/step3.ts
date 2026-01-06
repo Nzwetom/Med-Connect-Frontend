@@ -5,6 +5,7 @@ import { OnboardingService } from '../../services/onboarding';
 import { DoctorProfile } from '../../services/doctor-profile';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-step3',
@@ -79,7 +80,7 @@ export class Step3 {
     console.log('ðŸ“… Saving availability:', availabilityData);
 
     this.http.put(
-      'http://localhost:5000/api/availability/settings',
+      `${environment.apiUrl}/api/availability/settings`,
       availabilityData,
       { headers }
     ).subscribe({

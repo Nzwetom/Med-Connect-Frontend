@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface TimeSlot {
   start: string;
@@ -50,7 +51,7 @@ export interface AppointmentResponse {
   providedIn: 'root',
 })
 export class AppointmentService {
-  private apiUrl = 'http://localhost:5000/api/appointments';
+  private apiUrl = `${environment.apiUrl}/api/appointments`;
 
   constructor(private http: HttpClient) {}
 

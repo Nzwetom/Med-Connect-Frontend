@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 export interface User {
   userId: string;
@@ -30,7 +31,7 @@ export interface AuthResponse {
 })
 export class Auth {
 
-   private apiUrl = 'http://localhost:5000/api/auth'; 
+   private apiUrl = `${environment.apiUrl}/api/auth`; 
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
