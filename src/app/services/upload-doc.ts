@@ -25,7 +25,7 @@ export interface UploadResponse {
 })
 export class UploadDoc {
 
-   private apiUrl = `${environment.apiUrl}/documents`;
+   private apiUrl = `${environment.apiUrl}/api/documents`;
 
   constructor(private http: HttpClient) {}
 
