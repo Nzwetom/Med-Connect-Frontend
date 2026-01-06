@@ -1,0 +1,234 @@
+<!-- appointment.html -->
+<div class="appointments-container">
+  <app-shared-header [userType]="'patient'" [userName]="userName"></app-shared-header>
+
+  <!-- Main Content -->
+  <main class="appointments-main">
+    <div class="content-wrapper">
+      <!-- Page Header -->
+      <section class="page-header">
+        <h1 class="page-title">My Appointments</h1>
+        <p class="page-subtitle">Manage your healthcare appointments</p>
+      </section>
+
+      <!-- Tabs -->
+      <section class="tabs-section">
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'upcoming'"
+          (click)="switchTab('upcoming')"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+            <line x1="16" x2="16" y1="2" y2="6"/>
+            <line x1="8" x2="8" y1="2" y2="6"/>
+            <line x1="3" x2="21" y1="10" y2="10"/>
+          </svg>
+          Upcoming
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'past'"
+          (click)="switchTab('past')"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Past
+        </button>
+      </section>
+
+      <!-- Appointments List -->
+      <section class="appointments-list">
+        <div class="appointment-card" *ngFor="let appt of filteredAppointments">
+          <div class="appointment-left">
+            <div class="doctor-avatar-small">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div class="appointment-info">
+              <div class="appointment-header-flex">
+                <h3 class="doctor-name-appt">{{ appt.doctorName }}</h3>
+                <span class="status-badge" 
+                      [class.confirmed]="appt.status === 'confirmed'" 
+                      [class.pending]="appt.status === 'pending'"
+                      [class.completed]="appt.status === 'completed'"
+                      [class.cancelled]="appt.status === 'cancelled'">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" *ngIf="appt.status === 'confirmed'">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" *ngIf="appt.status === 'pending'">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  {{ appt.status | titlecase }}
+                </span>
+              </div>
+              <p class="doctor-specialty-appt">{{ appt.specialty }}</p>
+              
+              <div class="appointment-details">
+                <div class="detail-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="detail-icon">
+                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                    <line x1="16" x2="16" y1="2" y2="6"/>
+                    <line x1="8" x2="8" y1="2" y2="6"/>
+                    <line x1="3" x2="21" y1="10" y2="10"/>
+                  </svg>
+                  <span class="detail-text">{{ appt.date }}</span>
+                </div>
+                <div class="detail-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="detail-icon">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  <span class="detail-text">{{ appt.time }}</span>
+                </div>
+                <div class="detail-item" *ngIf="appt.type === 'in-person'">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="detail-icon">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  <span class="detail-text">{{ appt.location }}</span>
+                </div>
+                <div class="detail-item" *ngIf="appt.type === 'video'">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="detail-icon">
+                    <path d="m22 8-6 4 6 4V8Z"/>
+                    <rect width="14" height="12" x="2" y="6" rx="2" ry="2"/>
+                  </svg>
+                  <span class="detail-text">Video Call</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="appointment-actions">
+            <button class="btn-appt-action video" 
+                    *ngIf="appt.type === 'video' && appt.status === 'confirmed' && activeTab === 'upcoming'" 
+                    (click)="joinVideoCall(appt)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m22 8-6 4 6 4V8Z"/>
+                <rect width="14" height="12" x="2" y="6" rx="2" ry="2"/>
+              </svg>
+              Join Video Call
+            </button>
+            <button class="btn-appt-action message" (click)="openMessageModal(appt)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              Message
+            </button>
+            <button class="btn-appt-action cancel" 
+                    (click)="openCancelModal(appt)" 
+                    *ngIf="appt.status !== 'cancelled' && activeTab === 'upcoming'">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" x2="6" y1="6" y2="18"/>
+                <line x1="6" x2="18" y1="6" y2="18"/>
+              </svg>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="filteredAppointments.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" class="empty-icon">
+          <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+          <line x1="16" x2="16" y1="2" y2="6"/>
+          <line x1="8" x2="8" y1="2" y2="6"/>
+          <line x1="3" x2="21" y1="10" y2="10"/>
+        </svg>
+        <h3 class="empty-title">No {{ activeTab }} appointments</h3>
+        <p class="empty-text">You don't have any {{ activeTab }} appointments scheduled</p>
+        <button class="btn-find-doctor" routerLink="/findDoctors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          Find a Doctor
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Message Modal -->
+  <div class="modal-overlay" *ngIf="showMessageModal" (click)="closeMessageModal()">
+    <div class="modal-content message-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Message {{ selectedAppointment?.doctorName }}</h3>
+          <p class="modal-subtitle">{{ selectedAppointment?.specialty }}</p>
+        </div>
+        <button class="btn-close" (click)="closeMessageModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="message-preview">
+          <div class="preview-message received">
+            <p>Hello! I'm looking forward to our appointment on {{ selectedAppointment?.date }}.</p>
+            <span class="message-time">Yesterday, 3:45 PM</span>
+          </div>
+          <div class="preview-message sent">
+            <p>Thank you! I'll be there on time.</p>
+            <span class="message-time">Yesterday, 4:02 PM</span>
+          </div>
+        </div>
+
+        <div class="message-input-area">
+          <button class="btn-attach">
+            📎
+          </button>
+          <input 
+            type="text" 
+            placeholder="Type your message..."
+            [(ngModel)]="messageText"
+            (keyup.enter)="sendMessage()"
+            class="message-input"
+          >
+          <button class="btn-send" (click)="sendMessage()">
+            ➤
+          </button>
+        </div>
+
+        <p class="encryption-notice">
+          🔒 End-to-end encrypted messaging
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="showCancelModal" (click)="closeCancelModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">Cancel Appointment</h3>
+        <button class="btn-close" (click)="closeCancelModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" x2="6" y1="6" y2="18"/>
+            <line x1="6" x2="18" y1="6" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="warning-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" x2="12" y1="8" y2="12"/>
+            <line x1="12" x2="12.01" y1="16" y2="16"/>
+          </svg>
+        </div>
+        <p class="modal-text">Are you sure you want to cancel your appointment with <strong>{{ selectedAppointment?.doctorName }}</strong>?</p>
+        <p class="warning-text">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeCancelModal()">Keep Appointment</button>
+        <button class="btn-danger" (click)="confirmCancel()">Cancel Appointment</button>
+      </div>
+    </div>
+  </div>
+</div>

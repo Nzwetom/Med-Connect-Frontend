@@ -1,0 +1,20 @@
+<!-- ONBOARDING MODAL -->
+<ng-container *ngIf="isOpen">
+  <div class="onboarding-backdrop" (click)="onboardingService.close()">
+    <div class="onboarding-modal" (click)="$event.stopPropagation()">
+      <ng-container>
+        <app-step1 *ngIf="currentStep === 1"></app-step1>
+        <app-step2 *ngIf="currentStep === 2"></app-step2>
+        <app-step3 *ngIf="currentStep === 3"></app-step3>
+        <app-step4 *ngIf="currentStep === 4"></app-step4>
+
+        <div class="onboarding-actions" *ngIf="currentStep < 4">
+          <button (click)="onboardingService.previousStep()" [disabled]="currentStep === 1">Back</button>
+          <button (click)="onboardingService.nextStep()">
+            {{ currentStep === 4 ? 'Finish' : 'Next' }}
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>

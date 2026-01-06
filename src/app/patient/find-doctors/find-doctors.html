@@ -1,0 +1,302 @@
+<!-- find-doctors.html -->
+<div class="doctors-container">
+  <app-shared-header [userType]="'patient'" [userName]="userName"></app-shared-header>
+
+  <!-- Main Content -->
+  <main class="doctors-main">
+    <div class="content-wrapper">
+      <!-- Page Header -->
+      <section class="page-header">
+        <h1 class="page-title">Find Healthcare Providers</h1>
+        <p class="page-subtitle">Connect with verified doctors and manage your healthcare network</p>
+      </section>
+
+      <!-- Search and Filter -->
+      <section class="search-filter-section">
+        <div class="search-bar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input 
+            type="text" 
+            placeholder="Search doctors by name or specialty..." 
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="onSearch()"
+            class="search-input"
+          >
+          <button class="search-btn" (click)="onSearch()">Search</button>
+        </div>
+        <div class="filter-dropdown">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="filter-icon">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+          <select 
+            [(ngModel)]="selectedSpecialty"
+            (change)="onSpecialtyChange()"
+            class="specialty-select"
+          >
+            <option *ngFor="let spec of specialties" [value]="spec.value">
+              {{ spec.label }}
+            </option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="isLoading">
+        <p>Loading doctors...</p>
+      </div>
+
+      <!-- Doctors Grid -->
+      <section class="doctors-grid" *ngIf="!isLoading">
+        <div class="doctor-card" *ngFor="let doctor of filteredDoctors">
+          <div class="card-header-doc">
+            <div class="doctor-avatar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <span class="connected-badge" *ngIf="doctor.isConnected">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Connected
+            </span>
+            <span class="pending-badge" *ngIf="doctor.isPending && !doctor.isConnected">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Pending
+            </span>
+          </div>
+
+          <div class="card-body-doc">
+            <h3 class="doctor-name">{{ getFullDoctorName(doctor) }}</h3>
+            <p class="doctor-specialty">{{ doctor.specialty || 'General Practice' }}</p>
+            
+            <div class="doctor-rating">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FFC107" stroke="#FFC107" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+              <span class="rating-value">{{ doctor.rating }}</span>
+              <span class="review-count">({{ doctor.reviewCount }} reviews)</span>
+            </div>
+
+            <div class="doctor-info">
+              <div class="info-item" *ngIf="doctor.hospital">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span class="info-text">{{ doctor.hospital }}</span>
+              </div>
+              <div class="info-item" *ngIf="doctor.availableToday">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                  <line x1="16" x2="16" y1="2" y2="6"/>
+                  <line x1="8" x2="8" y1="2" y2="6"/>
+                  <line x1="3" x2="21" y1="10" y2="10"/>
+                </svg>
+                <span class="info-text available">Available Today</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <!-- Show for connected doctors -->
+            <ng-container *ngIf="doctor.isConnected">
+              <button class="btn-action-card secondary" (click)="openBookingModal(doctor)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                  <line x1="16" x2="16" y1="2" y2="6"/>
+                  <line x1="8" x2="8" y1="2" y2="6"/>
+                  <line x1="3" x2="21" y1="10" y2="10"/>
+                </svg>
+                Book Appointment
+              </button>
+              <button class="btn-action-card primary" (click)="openMessageModal(doctor)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                Message
+              </button>
+            </ng-container>
+
+            <!-- Show for pending connections -->
+            <button class="btn-action-card pending" *ngIf="doctor.isPending && !doctor.isConnected" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Request Pending
+            </button>
+
+            <!-- Show for unconnected doctors -->
+            <button class="btn-action-card connect" (click)="connectWithDoctor(doctor)" *ngIf="!doctor.isConnected && !doctor.isPending">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <line x1="19" x2="19" y1="8" y2="14"/>
+                <line x1="22" x2="16" y1="11" y2="11"/>
+              </svg>
+              Connect with Dr. {{ doctor.lastName }}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="!isLoading && filteredDoctors.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" class="empty-icon">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+        <h3 class="empty-title">No doctors found</h3>
+        <p class="empty-text">Try adjusting your search or filter criteria</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Message Modal -->
+  <div class="modal-overlay" *ngIf="showMessageModal" (click)="closeMessageModal()">
+    <div class="modal-content message-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Message {{ selectedDoctor ? getFullDoctorName(selectedDoctor) : '' }}</h3>
+          <p class="modal-subtitle">{{ selectedDoctor?.specialty }}</p>
+        </div>
+        <button class="btn-close" (click)="closeMessageModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="message-input-area">
+          <input 
+            type="text" 
+            placeholder="Type your message..."
+            [(ngModel)]="messageText"
+            (keyup.enter)="sendMessage()"
+            class="message-input"
+          >
+          <button class="btn-send" (click)="sendMessage()">
+            <span class="icon">➤</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Modal -->
+  <div class="modal-overlay" *ngIf="showBookingModal" (click)="closeBookingModal()">
+    <div class="modal-content booking-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Book Appointment with {{ selectedDoctor ? getFullDoctorName(selectedDoctor) : '' }}</h3>
+          <p class="modal-subtitle">{{ selectedDoctor?.specialty }}</p>
+        </div>
+        <button class="btn-close" (click)="closeBookingModal()">×</button>
+      </div>
+
+      <div class="modal-body booking-body">
+        <!-- Date Selection -->
+        <div class="form-group">
+          <label class="form-label">Select Date</label>
+          <input 
+            type="date" 
+            [(ngModel)]="bookingForm.date"
+            (change)="onDateChange()"
+            [min]="minDate"
+            class="form-input"
+          >
+        </div>
+
+        <!-- Loading Slots -->
+        <div class="loading-slots" *ngIf="loadingSlots">
+          <p>Loading available time slots...</p>
+        </div>
+
+        <!-- Time Slots -->
+        <div class="form-group" *ngIf="!loadingSlots && availableSlots.length > 0">
+          <label class="form-label">Available Time Slots</label>
+          <div class="time-slots-grid">
+            <button 
+              *ngFor="let slot of availableSlots"
+              class="time-slot-btn"
+              [class.selected]="bookingForm.startTime === slot.start"
+              (click)="selectTimeSlot(slot)"
+            >
+              {{ slot.start }}
+            </button>
+          </div>
+        </div>
+
+        <!-- No Slots Available -->
+        <div class="no-slots" *ngIf="!loadingSlots && bookingForm.date && availableSlots.length === 0">
+          <p>No available time slots for this date. Please select another date.</p>
+        </div>
+
+        <!-- Appointment Type -->
+        <div class="form-group" *ngIf="bookingForm.startTime">
+          <label class="form-label">Appointment Type</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input 
+                type="radio" 
+                name="type" 
+                value="in-person"
+                [(ngModel)]="bookingForm.type"
+              >
+              <span>In-Person Visit</span>
+            </label>
+            <label class="radio-label">
+              <input 
+                type="radio" 
+                name="type" 
+                value="video"
+                [(ngModel)]="bookingForm.type"
+              >
+              <span>Video Consultation</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Reason -->
+        <div class="form-group" *ngIf="bookingForm.type">
+          <label class="form-label">Reason for Visit *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="bookingForm.reason"
+            placeholder="e.g., Annual checkup, Follow-up, Consultation"
+            class="form-input"
+          >
+        </div>
+
+        <!-- Additional Notes -->
+        <div class="form-group" *ngIf="bookingForm.reason">
+          <label class="form-label">Additional Notes (Optional)</label>
+          <textarea 
+            [(ngModel)]="bookingForm.notes"
+            placeholder="Any specific concerns or information the doctor should know..."
+            rows="3"
+            class="form-textarea"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeBookingModal()">Cancel</button>
+        <button 
+          class="btn-primary" 
+          (click)="confirmBooking()"
+          [disabled]="!isBookingFormValid()"
+        >
+          Confirm Booking
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

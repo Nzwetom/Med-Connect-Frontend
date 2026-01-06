@@ -1,0 +1,446 @@
+<!-- account-settings.html -->
+<div class="settings-container">
+  <div class="settings-header">
+    <button class="btn-back" (click)="goBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back
+    </button>
+    <h1 class="settings-title">Account Settings</h1>
+  </div>
+
+  <div class="settings-content">
+    <!-- Sidebar Navigation -->
+    <aside class="settings-sidebar">
+      <nav class="settings-nav">
+        <button 
+          class="nav-item" 
+          [class.active]="activeTab === 'profile'"
+          (click)="setActiveTab('profile')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          Profile Information
+        </button>
+        
+        <button 
+          class="nav-item" 
+          [class.active]="activeTab === 'roles'"
+          (click)="setActiveTab('roles')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          Role Management
+        </button>
+        
+        <button 
+          class="nav-item" 
+          [class.active]="activeTab === 'security'"
+          (click)="setActiveTab('security')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Security
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="settings-main">
+      <!-- Profile Information Tab -->
+      <div class="settings-panel" *ngIf="activeTab === 'profile'">
+        <div class="panel-header">
+          <h2 class="panel-title">Profile Information</h2>
+          <p class="panel-subtitle">Manage your personal details</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="userProfile.name"
+              placeholder="Enter your full name">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input 
+              type="email" 
+              class="form-input" 
+              [(ngModel)]="userProfile.email"
+              placeholder="your.email@example.com">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input 
+              type="tel" 
+              class="form-input" 
+              [(ngModel)]="userProfile.phone"
+              placeholder="+1 (555) 000-0000">
+          </div>
+        </div>
+
+        <!-- Patient Specific Fields -->
+        <div *ngIf="userProfile.roles.isPatient" class="role-section">
+          <h3 class="role-section-title">Patient Medical Information</h3>
+          
+          <!-- Basic Medical Info -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Date of Birth *</label>
+              <input 
+                type="date" 
+                class="form-input" 
+                [(ngModel)]="patientMedicalInfo.dateOfBirth">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Gender *</label>
+              <select class="form-input" [(ngModel)]="patientMedicalInfo.gender">
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Blood Type</label>
+              <select class="form-input" [(ngModel)]="patientMedicalInfo.bloodType">
+                <option value="">Select Blood Type</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Allergies Section -->
+          <div class="subsection">
+            <h4 class="subsection-title">Allergies</h4>
+            <div *ngFor="let allergy of patientMedicalInfo.allergies; let i = index" class="array-item">
+              <div class="form-grid">
+                <div class="form-group">
+                  <input 
+                    type="text" 
+                    class="form-input" 
+                    [(ngModel)]="allergy.name"
+                    placeholder="Allergy name (e.g., Penicillin)">
+                </div>
+                <div class="form-group">
+                  <select class="form-input" [(ngModel)]="allergy.severity">
+                    <option value="mild">Mild</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="severe">Severe</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <input 
+                    type="text" 
+                    class="form-input" 
+                    [(ngModel)]="allergy.reaction"
+                    placeholder="Reaction (e.g., Hives, Anaphylaxis)">
+                </div>
+                <button type="button" class="btn-remove-item" (click)="removeAllergy(i)">×</button>
+              </div>
+            </div>
+            <button type="button" class="btn-add-item" (click)="addAllergy()">+ Add Allergy</button>
+          </div>
+
+          <!-- Emergency Contact -->
+          <div class="subsection">
+            <h4 class="subsection-title">Emergency Contact</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Name</label>
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  [(ngModel)]="patientMedicalInfo.emergencyContact.name"
+                  placeholder="Contact name">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Relationship</label>
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  [(ngModel)]="patientMedicalInfo.emergencyContact.relationship"
+                  placeholder="e.g., Spouse, Parent">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input 
+                  type="tel" 
+                  class="form-input" 
+                  [(ngModel)]="patientMedicalInfo.emergencyContact.phone"
+                  placeholder="+1 (555) 000-0000">
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Medications -->
+          <div class="subsection">
+            <h4 class="subsection-title">Current Medications</h4>
+            <div *ngFor="let med of patientMedicalInfo.currentMedications; let i = index" class="array-item">
+              <div class="form-grid">
+                <div class="form-group">
+                  <input 
+                    type="text" 
+                    class="form-input" 
+                    [(ngModel)]="med.name"
+                    placeholder="Medication name">
+                </div>
+                <div class="form-group">
+                  <input 
+                    type="text" 
+                    class="form-input" 
+                    [(ngModel)]="med.dosage"
+                    placeholder="Dosage (e.g., 10mg)">
+                </div>
+                <div class="form-group">
+                  <input 
+                    type="text" 
+                    class="form-input" 
+                    [(ngModel)]="med.frequency"
+                    placeholder="Frequency (e.g., Once daily)">
+                </div>
+                <button type="button" class="btn-remove-item" (click)="removeMedication(i)">×</button>
+              </div>
+            </div>
+            <button type="button" class="btn-add-item" (click)="addMedication()">+ Add Medication</button>
+          </div>
+        </div>
+
+        <!-- Doctor Specific Fields -->
+        <div *ngIf="userProfile.roles.isDoctor" class="role-section">
+          <h3 class="role-section-title">Doctor Information</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Specialty *</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="doctorInfo.specialty"
+                placeholder="e.g., Cardiology">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Phone Number *</label>
+              <input 
+                type="tel" 
+                class="form-input" 
+                [(ngModel)]="doctorInfo.phone"
+                placeholder="+237 6XX XXX XXX">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Hospital/Clinic</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="doctorInfo.hospital"
+                placeholder="Primary workplace">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Years of Experience</label>
+              <input 
+                type="number" 
+                class="form-input" 
+                [(ngModel)]="doctorInfo.yearsOfExperience"
+                placeholder="0">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Consultation Fee ($)</label>
+              <input 
+                type="number" 
+                class="form-input" 
+                [(ngModel)]="doctorInfo.consultationFee"
+                placeholder="0">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Professional Bio</label>
+            <textarea 
+              class="form-input" 
+              [(ngModel)]="doctorInfo.bio"
+              placeholder="Tell patients about your background, experience, and approach to care..."
+              rows="4"></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-primary" (click)="saveProfile()">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- Role Management Tab -->
+      <div class="settings-panel" *ngIf="activeTab === 'roles'">
+        <div class="panel-header">
+          <h2 class="panel-title">Role Management</h2>
+          <p class="panel-subtitle">Manage your account roles and permissions</p>
+        </div>
+
+        <div class="roles-grid">
+          <!-- Patient Role Card -->
+          <div class="role-card" [class.active]="userProfile.roles.isPatient">
+            <div class="role-icon patient-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <h3 class="role-title">Patient</h3>
+            <p class="role-description">Manage your medical records and appointments</p>
+            
+            <div class="role-status" *ngIf="userProfile.roles.isPatient">
+              <span class="status-badge active">Active</span>
+            </div>
+            
+            <button 
+              *ngIf="!userProfile.roles.isPatient"
+              class="btn-activate"
+              (click)="requestRoleActivation('patient')">
+              Activate Patient Role
+            </button>
+            
+            <div class="role-actions" *ngIf="userProfile.roles.isPatient">
+              <button class="btn-switch" (click)="switchToRole('patient')">
+                Switch to Patient View
+              </button>
+              <button class="btn-deactivate" (click)="requestRoleDeactivation('patient')">
+                Deactivate Role
+              </button>
+            </div>
+          </div>
+
+          <!-- Doctor Role Card -->
+          <div class="role-card" [class.active]="userProfile.roles.isDoctor">
+            <div class="role-icon doctor-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <h3 class="role-title">Doctor</h3>
+            <p class="role-description">Access patient records and manage consultations</p>
+            
+            <div class="role-status" *ngIf="userProfile.roles.isDoctor">
+              <span class="status-badge active">Active</span>
+            </div>
+            
+            <button 
+              *ngIf="!userProfile.roles.isDoctor"
+              class="btn-activate"
+              (click)="requestRoleActivation('doctor')">
+              Activate Doctor Role
+            </button>
+            
+            <div class="role-actions" *ngIf="userProfile.roles.isDoctor">
+              <button class="btn-switch" (click)="switchToRole('doctor')">
+                Switch to Doctor View
+              </button>
+              <button class="btn-deactivate" (click)="requestRoleDeactivation('doctor')">
+                Deactivate Role
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Tab -->
+      <div class="settings-panel" *ngIf="activeTab === 'security'">
+        <div class="panel-header">
+          <h2 class="panel-title">Security Settings</h2>
+          <p class="panel-subtitle">Manage your password and security preferences</p>
+        </div>
+
+        <div class="security-section">
+          <h3 class="section-title">Change Password</h3>
+          
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input 
+              type="password" 
+              class="form-input" 
+              [(ngModel)]="currentPassword"
+              placeholder="Enter current password">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input 
+              type="password" 
+              class="form-input" 
+              [(ngModel)]="newPassword"
+              placeholder="Enter new password">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input 
+              type="password" 
+              class="form-input" 
+              [(ngModel)]="confirmPassword"
+              placeholder="Confirm new password">
+          </div>
+
+          <button class="btn-primary" (click)="changePassword()">
+            Update Password
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Role Activation Modal -->
+  <div class="modal-overlay" *ngIf="showRoleActivation" (click)="closeRoleActivation()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">Activate {{ pendingRole === 'patient' ? 'Patient' : 'Doctor' }} Role</h3>
+        <button class="btn-close" (click)="closeRoleActivation()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" x2="6" y1="6" y2="18"/>
+            <line x1="6" x2="18" y1="6" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-text">
+          You are about to activate the {{ pendingRole === 'patient' ? 'Patient' : 'Doctor' }} role for your account. 
+          This will give you access to {{ pendingRole === 'patient' ? 'manage your medical records and book appointments' : 'view patient records and manage consultations' }}.
+        </p>
+        <p class="modal-text">
+          {{ pendingRole === 'doctor' ? 'You will be guided through a setup process to complete your doctor profile.' : 'Please complete your patient profile information after activation.' }}
+        </p>
+        <p class="modal-text">
+          You can switch between roles at any time from the Role Management section.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeRoleActivation()">Cancel</button>
+        <button class="btn-primary" (click)="confirmRoleActivation()">Confirm Activation</button>
+      </div>
+    </div>
+  </div>
+</div>

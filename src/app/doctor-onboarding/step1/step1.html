@@ -1,0 +1,58 @@
+<!-- step1.html -->
+<div class="modal-card">
+  <div class="modal-header">
+    <div>
+      <h2 class="modal-title">Complete Your Doctor Profile</h2>
+      <p class="modal-subtitle">Step 1 of 4 - Please provide your professional information</p>
+    </div>
+    <button class="modal-close" (click)="close()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Specialty <span class="required">*</span></label>
+    <select class="form-select" [(ngModel)]="specialty">
+      <option>Select your specialty</option>
+      <option>Cardiology</option>
+      <option>Dermatology</option>
+      <option>General Practice</option>
+      <option>Pediatrics</option>
+      <option>Neurology</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Phone Number <span class="required">*</span></label>
+    <input type="tel" class="form-input" [(ngModel)]="phone" placeholder="+237 6XX XXX XXX" />
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Hospital Affiliation</label>
+    <input type="text" class="form-input" [(ngModel)]="hospital" placeholder="City General Hospital" />
+  </div>
+
+  <div class="grid-2">
+    <div class="form-group">
+      <label class="form-label">Years of Experience</label>
+      <input type="number" class="form-input" [(ngModel)]="experience" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Consultation Fee ($)</label>
+      <input type="number" class="form-input" [(ngModel)]="fee" />
+    </div>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn btn-secondary" (click)="close()">Cancel</button>
+    <button class="btn btn-primary" (click)="next()">
+      Next: Availability Hours
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,122 @@
+<!-- step2.html -->
+<div class="modal-card">
+  <div class="modal-header">
+    <div>
+      <h2 class="modal-title">Complete Your Doctor Profile</h2>
+      <p class="modal-subtitle">Step 2 of 4 - Set your availability hours</p>
+    </div>
+    <button class="modal-close" (click)="close()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- General Settings -->
+  <div class="settings-section">
+    <h3 class="section-title">Appointment Settings</h3>
+    <div class="settings-row">
+      <div class="form-group">
+        <label class="form-label">Appointment Duration (minutes)</label>
+        <select class="form-select" [(ngModel)]="slotDuration">
+          <option [value]="15">15 minutes</option>
+          <option [value]="20">20 minutes</option>
+          <option [value]="30">30 minutes</option>
+          <option [value]="45">45 minutes</option>
+          <option [value]="60">60 minutes</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Office Location (Optional)</label>
+        <input 
+          type="text" 
+          class="form-input" 
+          [(ngModel)]="location" 
+          placeholder="e.g., Medical Center, Room 205"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly Schedule -->
+  <div class="schedule-section">
+    <h3 class="section-title">Weekly Schedule</h3>
+    <p class="section-subtitle">Set your available hours for each day of the week</p>
+
+    <div class="days-list">
+      <div *ngFor="let day of days" class="day-card" [class.closed]="!schedule[day.key].isOpen">
+        <div class="day-header">
+          <div class="day-title">
+            <label class="toggle-container">
+              <input 
+                type="checkbox" 
+                [checked]="schedule[day.key].isOpen"
+                (change)="toggleDay(day.key)"
+                class="toggle-input"
+              />
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="day-name">{{ day.label }}</span>
+          </div>
+          <span class="day-status">{{ getDayStatus(day.key) }}</span>
+        </div>
+
+        <!-- Time Slots -->
+        <div class="time-slots" *ngIf="schedule[day.key].isOpen">
+          <div *ngFor="let slot of schedule[day.key].slots; let i = index" class="time-slot-row">
+            <div class="time-inputs">
+              <input 
+                type="time" 
+                class="time-input" 
+                [(ngModel)]="slot.start"
+                placeholder="Start"
+              />
+              <span class="time-separator">to</span>
+              <input 
+                type="time" 
+                class="time-input" 
+                [(ngModel)]="slot.end"
+                placeholder="End"
+              />
+            </div>
+            <button 
+              *ngIf="schedule[day.key].slots.length > 1"
+              class="btn-remove-slot" 
+              (click)="removeSlot(day.key, i)"
+              type="button"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+          
+          <button class="btn-add-slot" (click)="addSlot(day.key)" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add Time Slot
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn btn-secondary" (click)="back()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back
+    </button>
+    <button class="btn btn-primary" (click)="next()">
+      Next: Bio
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </button>
+  </div>
+</div>

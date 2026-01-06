@@ -1,0 +1,170 @@
+<app-shared-header [userType]="'patient'"></app-shared-header>
+
+<!-- Main Content -->
+<main class="upload-main">
+  <div class="content-wrapper">
+    <!-- Page Header -->
+    <section class="page-header">
+      <button class="btn-back" (click)="cancel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back to Records
+      </button>
+      <h1 class="page-title">Upload New Document</h1>
+      <p class="page-subtitle">Add a medical document to your digital health record</p>
+    </section>
+
+    <!-- Upload Form -->
+    <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()" class="upload-form">
+      <div class="form-grid">
+        <!-- File Upload Area -->
+        <div class="form-section full-width">
+          <label class="section-label">Document File *</label>
+          
+          <div 
+            class="file-upload-area"
+            [class.has-file]="selectedFile"
+            (drop)="onDrop($event)"
+            (dragover)="onDragOver($event)"
+          >
+            <div class="upload-content" *ngIf="!selectedFile">
+              <div class="upload-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+              </div>
+              <h3 class="upload-text">Drag & drop your file here</h3>
+              <p class="upload-subtext">or</p>
+              <label class="btn-browse">
+                Browse Files
+                <input 
+                  type="file" 
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  (change)="onFileSelected($event)"
+                  hidden
+                >
+              </label>
+              <p class="file-info">Supported formats: PDF, JPG, PNG (Max 10MB)</p>
+            </div>
+
+            <div class="file-preview" *ngIf="selectedFile">
+              <div class="preview-content">
+                <img [src]="filePreview" alt="Preview" class="preview-image" *ngIf="filePreview">
+                <div class="pdf-placeholder" *ngIf="!filePreview">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="file-details">
+                <div class="file-name">{{ selectedFile.name }}</div>
+                <div class="file-size">{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</div>
+                <button type="button" class="btn-remove" (click)="removeFile()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                  </svg>
+                  Remove File
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="error-message" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+        </div>
+
+        <!-- Document Title -->
+        <div class="form-section">
+          <label for="title" class="form-label">Document Title *</label>
+          <input
+            type="text"
+            id="title"
+            formControlName="docTitle"
+            class="form-input"
+            [class.error]="docTitle?.invalid && docTitle?.touched"
+            placeholder="e.g., Blood Test Results"
+          >
+          <div class="error-message" *ngIf="docTitle?.invalid && docTitle?.touched">
+            <span *ngIf="docTitle?.errors?.['required']">Title is required</span>
+            <span *ngIf="docTitle?.errors?.['minlength']">Title must be at least 3 characters</span>
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="form-section">
+          <label for="category" class="form-label">Category *</label>
+          <select
+            id="category"
+            formControlName="category"
+            class="form-select"
+            [class.error]="category?.invalid && category?.touched"
+          >
+            <option *ngFor="let cat of categories" [value]="cat.value" [disabled]="cat.disabled">
+              {{ cat.label }}
+            </option>
+          </select>
+          <div class="error-message" *ngIf="category?.invalid && category?.touched">
+            Category is required
+          </div>
+        </div>
+
+        <!-- Document Date -->
+        <div class="form-section">
+          <label for="documentDate" class="form-label">Document Date *</label>
+          <input
+            type="date"
+            id="documentDate"
+            formControlName="docDate"
+            class="form-input"
+            [class.error]="docDate?.invalid && docDate?.touched"
+          >
+          <div class="error-message" *ngIf="docDate?.invalid && docDate?.touched">
+            Document date is required
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-section full-width">
+          <label for="description" class="form-label">Description (Optional)</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            class="form-textarea"
+            placeholder="Add any additional notes or details about this document..."
+            rows="4"
+          ></textarea>
+          <div class="char-count">
+            {{ description?.value?.length || 0 }} / 500 characters
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Progress -->
+      <div class="upload-progress" *ngIf="uploading">
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+        <p class="progress-text">Uploading...</p>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()" [disabled]="uploading">
+          Cancel
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="uploading">
+          <span *ngIf="!uploading">Upload Document</span>
+          <span *ngIf="uploading">Uploading...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</main>

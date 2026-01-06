@@ -1,0 +1,142 @@
+<app-shared-header [userType]="'patient'"></app-shared-header>
+
+<!-- Main Content -->
+<main class="detail-main" *ngIf="!loading && document">
+  <div class="content-wrapper">
+    <!-- Back Button -->
+    <button class="btn-back" (click)="goBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back to Records
+    </button>
+
+    <!-- Document Header -->
+    <section class="document-header">
+      <div class="header-left">
+        <div class="category-tag" [style.background-color]="document.categoryColor + '20'" 
+             [style.color]="document.categoryColor">
+          {{ document.category }}
+        </div>
+        <h1 class="document-title">{{ document.title }}</h1>
+        <div class="document-meta">
+          <span class="meta-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="meta-icon">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Document Date: {{ document.date }}
+          </span>
+          <span class="meta-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="meta-icon">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Uploaded: {{ document.uploadedDate }}
+          </span>
+          <span class="meta-item" *ngIf="document.fileSize !== 'N/A'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="meta-icon">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            Size: {{ document.fileSize }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="header-actions-doc">
+        <button class="btn-action danger" (click)="deleteDocument()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            <line x1="10" y1="11" x2="10" y2="17"/>
+            <line x1="14" y1="11" x2="14" y2="17"/>
+          </svg>
+          Delete
+        </button>
+      </div>
+    </section>
+
+    <!-- Description -->
+    <section class="description-section" *ngIf="document.description">
+      <h2 class="section-title">Description</h2>
+      <p class="description-text">{{ document.description }}</p>
+    </section>
+
+    <!-- Document Viewer -->
+    <section class="document-viewer">
+      <h2 class="section-title">Document Preview</h2>
+      
+      <div class="viewer-container">
+        <!-- Image Preview -->
+        <div class="image-viewer" *ngIf="document.fileType.startsWith('image/')">
+          <img [src]="document.fileUrl" [alt]="document.title" class="document-image">
+        </div>
+
+        <!-- PDF Preview -->
+        <div class="pdf-viewer" *ngIf="document.fileType === 'application/pdf'">
+          <iframe [src]="document.safeFileUrl" class="pdf-frame" frameborder="0"></iframe>
+        </div>
+
+        <!-- Download Prompt for unsupported types -->
+        <div class="download-prompt" *ngIf="!document.fileType.startsWith('image/') && document.fileType !== 'application/pdf'">
+          <div class="prompt-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <h3 class="prompt-title">Preview not available</h3>
+          <p class="prompt-text">This file type cannot be previewed in the browser.</p>
+          <button class="btn-primary" (click)="downloadDocument()">Download File</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Loading document...</p>
+</div>
+
+<!-- Not Found State -->
+<div class="not-found-container" *ngIf="!loading && !document">
+  <div class="not-found-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+  </div>
+  <h2>Document Not Found</h2>
+  <p>The document you're looking for doesn't exist or has been removed.</p>
+  <button class="btn-primary" (click)="goBack()">Back to Records</button>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Delete Document</h3>
+      <button class="btn-close" (click)="cancelDelete()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete "{{ document?.title }}"?</p>
+      <p class="warning-text">This action cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+      <button class="btn-danger" (click)="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
