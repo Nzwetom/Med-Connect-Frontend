@@ -156,51 +156,57 @@
     </div>
   </main>
 
-  <!-- Message Modal -->
-  <div class="modal-overlay" *ngIf="showMessageModal" (click)="closeMessageModal()">
-    <div class="modal-content message-modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <div>
-          <h3 class="modal-title">Message {{ selectedAppointment?.doctorName }}</h3>
-          <p class="modal-subtitle">{{ selectedAppointment?.specialty }}</p>
-        </div>
-        <button class="btn-close" (click)="closeMessageModal()">×</button>
-      </div>
-
-      <div class="modal-body">
-        <div class="message-preview">
-          <div class="preview-message received">
-            <p>Hello! I'm looking forward to our appointment on {{ selectedAppointment?.date }}.</p>
-            <span class="message-time">Yesterday, 3:45 PM</span>
+   <!-- Message Input Area -->
+        <div class="message-input-section">
+          <!-- Attached File Display -->
+          <div class="attached-file" *ngIf="attachedFile">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="file-icon">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <div class="file-info">
+              <span class="file-name">{{ attachedFile.name }}</span>
+              <span class="file-size">{{ formatFileSize(attachedFile.size) }}</span>
+            </div>
+            <button type="button" class="btn-remove-file" (click)="removeAttachment()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
           </div>
-          <div class="preview-message sent">
-            <p>Thank you! I'll be there on time.</p>
-            <span class="message-time">Yesterday, 4:02 PM</span>
+
+          <!-- Input Wrapper -->
+          <div class="input-wrapper">
+            <button class="btn-attach" (click)="triggerFileInput()" type="button">
+              📎
+            </button>
+            <input 
+              type="text" 
+              placeholder="Type your message..."
+              [(ngModel)]="messageText"
+              (keyup.enter)="sendMessage()"
+              class="message-input"
+            >
+            <input 
+              type="file" 
+              #fileInput
+              class="file-input-hidden" 
+              (change)="onFileSelected($event)"
+              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+              style="display: none;"
+            >
+            <button class="btn-send" (click)="sendMessage()" [disabled]="!messageText.trim() && !attachedFile">
+              ➤
+            </button>
           </div>
-        </div>
 
-        <div class="message-input-area">
-          <button class="btn-attach">
-            📎
-          </button>
-          <input 
-            type="text" 
-            placeholder="Type your message..."
-            [(ngModel)]="messageText"
-            (keyup.enter)="sendMessage()"
-            class="message-input"
-          >
-          <button class="btn-send" (click)="sendMessage()">
-            ➤
-          </button>
+          <p class="encryption-notice">
+            🔒 End-to-end encrypted messaging
+          </p>
         </div>
-
-        <p class="encryption-notice">
-          🔒 End-to-end encrypted messaging
-        </p>
-      </div>
-    </div>
-  </div>
+     
+  
 
   <!-- Cancel Confirmation Modal -->
   <div class="modal-overlay" *ngIf="showCancelModal" (click)="closeCancelModal()">

@@ -253,3 +253,312 @@
   .appointment-actions,
   .tab-button { width: 100%; }
 }
+
+
+/* Add these styles to your find-doctors.css and appointment.css files */
+
+/* Full Message Modal */
+.message-modal-full {
+  width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body-messages {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  padding: 0;
+}
+
+/* Messages Area */
+.messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.messages-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-area::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.messages-area::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+/* Loading Messages */
+.loading-messages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Empty Messages */
+.empty-messages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* Message Bubbles */
+.message {
+  display: flex;
+  flex-direction: column;
+  max-width: 75%;
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sent Messages (Current User) - Right Side */
+.message.sent {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.message.sent .message-bubble {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: white;
+  border-radius: 18px 18px 4px 18px;
+}
+
+.message.sent .message-time {
+  color: #64748b;
+  text-align: right;
+}
+
+/* Received Messages (Other User) - Left Side */
+.message.received {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.message.received .message-bubble {
+  background: white;
+  color: #1e293b;
+  border-radius: 18px 18px 18px 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.message.received .message-time {
+  color: #64748b;
+  text-align: left;
+}
+
+.message-bubble {
+  padding: 12px 16px;
+  word-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.message-time {
+  font-size: 11px;
+  margin-top: 4px;
+  padding: 0 8px;
+}
+
+/* Attachment Info in Bubbles */
+.attachment-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 13px;
+}
+
+.message.received .attachment-info {
+  border-top-color: #e2e8f0;
+}
+
+/* Message Input Section */
+.message-input-section {
+  border-top: 1px solid #e2e8f0;
+  background: white;
+  padding: 16px;
+}
+
+/* Attached File Display */
+.attached-file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.file-icon {
+  flex-shrink: 0;
+}
+
+.file-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.file-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-size {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.btn-remove-file {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #64748b;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-remove-file:hover {
+  background: #e2e8f0;
+  color: #ef4444;
+}
+
+/* Input Wrapper */
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 8px 12px;
+  transition: all 0.2s;
+}
+
+.input-wrapper:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.btn-attach {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.btn-attach:hover {
+  background: #e2e8f0;
+}
+
+.message-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px;
+  font-size: 14px;
+  color: #1e293b;
+  outline: none;
+}
+
+.message-input::placeholder {
+  color: #94a3b8;
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.btn-send {
+  background: #2563eb;
+  color: white;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-send:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: scale(1.05);
+}
+
+.btn-send:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Encryption Notice */
+.encryption-notice {
+  text-align: center;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .message-modal-full {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .modal-body-messages {
+    height: 60vh;
+  }
+
+  .message {
+    max-width: 85%;
+  }
+}
